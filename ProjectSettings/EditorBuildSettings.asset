@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/LoadingScreen.unity
+    guid: 19e45f4f55fa630429d437bd670c5f54
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: c4efaa55551b16a4996919ae743134ec
+  - enabled: 1
+    path: Assets/Scenes/Maps/TrainingGrounds/TrainingGrounds.unity
+    guid: 297090bcd620bb7419c2f09974f1e5f0
+  - enabled: 1
+    path: Assets/Scenes/Duel/DuelMain.unity
+    guid: 439dd0e2e96f0fc4aa699926953dc8ee
+  - enabled: 1
+    path: Assets/Scenes/Duel/Maps/Duel Prototype.unity
+    guid: 810d6081079e7be4dae01a0a271abf8a
+  m_configObjects: {}
