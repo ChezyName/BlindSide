@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 using Mirror;
@@ -104,6 +105,7 @@ public class Player : NetworkBehaviour
     protected bool Paused;
 
     protected GameManager gm;
+    protected InputManager im;
 
     public void setName(string n)
     {
@@ -133,6 +135,8 @@ public class Player : NetworkBehaviour
             Camera.gameObject.SetActive(true);
 
             dc = GetComponentInChildren<DynamicCrosshair>();
+            im = InputManager.current;
+            getInputManager();
         }
         else
         {
@@ -169,7 +173,7 @@ public class Player : NetworkBehaviour
     public void showBody(bool v)
     {
         PlayerBody.gameObject.SetActive(v);
-            for (int i = 0; i < PlayerBody.transform.childCount; i++)
+        for (int i = 0; i < PlayerBody.transform.childCount; i++)
         {
             PlayerBody.transform.GetChild(i).gameObject.SetActive(v);
         }
@@ -193,6 +197,13 @@ public class Player : NetworkBehaviour
         canMove = v;
     }
 
+    private void getInputManager()
+    {
+        // subscribe to on escape and jump events
+        im.onEscape += onEscape;
+        im.onJump += onJump;
+    }
+
     [Client]
     protected virtual void onClientUpdate() { }
     [Server]
@@ -204,11 +215,15 @@ public class Player : NetworkBehaviour
         {
             return CurrentGun.AirBloom;
         }
+        else if (isSliding)
+        {
+            return CurrentGun.SlideBloom;
+        }
         else if (isCrouching)
         {
             return CurrentGun.CrouchBloom;
         }
-        else if (isRunning)
+        else if (isRunning && im.getMovement().y > 0)
         {
             return CurrentGun.RunBloom;
         }
@@ -218,6 +233,8 @@ public class Player : NetworkBehaviour
         }
     }
 
+
+    protected float lastPressed = 0;
     protected void Update()
     {
         if (netIdentity.isLocalPlayer && !Paused)
@@ -244,8 +261,29 @@ public class Player : NetworkBehaviour
             //Debug.Log("CLIENT: " + gunTimer);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && netIdentity.isLocalPlayer)
+        if (netIdentity.isServer)
         {
+            ServerUpdate();
+            onServerUpdate();
+        }
+    }
+
+    protected void onJump(bool active)
+    {
+        Debug.Log("JUMP EVENT CALLED : " + active);
+        if (active && isGrounded && !isSliding && !isDowned && canMove)
+        {
+            airSpeed = Mathf.Sqrt((JumpPower / 100) * -2f * -Gravity);
+            cc.Move(Vector3.Lerp(cc.transform.position, Vector3.up * airSpeed,Time.fixedDeltaTime*2));
+        }
+    }
+
+    protected void onEscape(bool active)
+    {
+        Debug.Log("ESC EVENT CALLED : " + active);
+        if (active && netIdentity.isLocalPlayer)
+        {
+            lastPressed = Time.time;
             Paused = !Paused;
             PauseMenu.SetActive(Paused);
             HUD.SetActive(!Paused);
@@ -260,12 +298,6 @@ public class Player : NetworkBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-        }
-
-        if (netIdentity.isServer)
-        {
-            ServerUpdate();
-            onServerUpdate();
         }
     }
 
@@ -448,21 +480,34 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [TargetRpc]
-    private void Recoil(int ID)
+    private void Recoil()
     {
-        Gun g = GetGun(ID);
-        float x = Random.Range(g.RecoilX.x, g.RecoilX.y);
-        float y = Random.Range(g.RecoilY.x, g.RecoilY.y);
+        Gun g = CurrentGun;
+        float x = Random.Range((g.RecoilX.x / 10), g.RecoilX.y / 10);
+        float y = Random.Range((g.RecoilY.x / 10), g.RecoilY.y / 10);
 
-        //transform.Rotate();
-        xRot += Mathf.LerpAngle(xRot, y, 8 * Time.fixedDeltaTime);
-        transform.Rotate(Vector3.Slerp(transform.rotation.eulerAngles, Vector3.up * x, 8 * Time.fixedDeltaTime));
+        if (isCrouching)
+        {
+            x /= 2;
+            y /= 1.5f;
+        }
+
+        Vector2 mouse = im.getMouse();
+        float mouseX = mouse.x * (MouseSens * 2);
+        float mouseY = mouse.y * (MouseSens * 2);
+
+        xRot -= Mathf.Lerp(mouseY, mouseY + y, 12);
+        xRot = Mathf.Clamp(xRot, -75, 75);
+
+        //mouseX = Mathf.Lerp(mouseX,mouseX + x, 0.8f * Time.deltaTime);
+
+        transform.Rotate(Vector3.up * Mathf.Lerp(mouseX,mouseX + x,12));
+        Camera.transform.localEulerAngles = Vector3.right * xRot;
     }
 
     protected void UpdateButtons()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDowned)
+        if (im.getSprint() && !isDowned)
         {
             isRunning = true;
 
@@ -471,7 +516,7 @@ public class Player : NetworkBehaviour
                 isSliding = false;
             }
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift) && !isDowned)
+        else if (im.getSprint() == false && !isDowned)
         {
             isRunning = false;
             if (justSlid) justSlid = false;
@@ -479,12 +524,12 @@ public class Player : NetworkBehaviour
 
         if(CurrentGun != null && gunTimer < 0 && !isDowned && !firing)
         {
-            if (CurrentGun.FireType == Gun.FireMode.Auto && Input.GetMouseButton(0))
+            if (CurrentGun.FireType == Gun.FireMode.Auto && im.getFireHold())
             {
                 StartCoroutine(ShootPrimary());
                 gunTimer = (60 / CurrentGun.RPM);
             }
-            else if (CurrentGun.FireType == Gun.FireMode.Semi && Input.GetMouseButtonDown(0))
+            else if (CurrentGun.FireType == Gun.FireMode.Semi && im.getFirePress())
             {
                 StartCoroutine(ShootPrimary());
                 gunTimer = (60 / CurrentGun.RPM);
@@ -495,12 +540,15 @@ public class Player : NetworkBehaviour
             //Debug.Log(CurrentGun + " IS NULL!");
         }
 
+        /*
+        // CONVERTE TO NEW INPUTMANAGER
         if (Input.GetKeyDown(KeyCode.F) && !isDowned)
         {
             CmdToggleUtility();
         }
+        */
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) && !isDowned && Primary != null) OnPrimaryPressed();
+        //if (Input.GetKeyDown(KeyCode.Alpha1) && !isDowned && Primary != null) OnPrimaryPressed();
 
 
         /*
@@ -672,6 +720,7 @@ public class Player : NetworkBehaviour
                 //Debug.Log("FIRING TO CLIENT");
                 // + Camera.transform.forward * .5f
                 CmdShowFire(Camera.transform.position, firedir);
+                Recoil();
                 p_Mag--;
                 yield return new WaitForSeconds(CurrentGun.DelayPerShot / 100);
             }
@@ -784,7 +833,7 @@ public class Player : NetworkBehaviour
     bool justSlid = false;
     protected void Movement()
     {
-        isCrouching = (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C));
+        isCrouching = (im.getCrouch());
 
         if (!isGrounded)
         {
@@ -801,8 +850,7 @@ public class Player : NetworkBehaviour
         }
 
 
-        Vector2 inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        inputDir.Normalize();
+        Vector2 inputDir = im.getMovement();
 
         if(canMove == false)
         {
@@ -827,13 +875,15 @@ public class Player : NetworkBehaviour
             currentSpeed = WalkSpeed;
         }
 
-        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C)) && isRunning && isSliding == false)
+        /*
+        if (isCrouching && isRunning && isSliding == false)
         {
             slideDir = (transform.forward * inputDir.y + transform.right * inputDir.x);
             Slide();
             justSlid = true;
             isRunning = false;
         }
+        */
 
         if(!isDowned) CmdShowCrouch(isSliding || isCrouching);
 
@@ -850,25 +900,6 @@ public class Player : NetworkBehaviour
                 Debug.Log("Slide Cancel");
             }
             */
-        }
-
-        if (Input.GetKey(KeyCode.Space) && isGrounded && !isSliding && !isDowned && canMove)
-        {
-            /*
-            if (false)
-            {
-                airSpeed = Mathf.Sqrt((JumpPower / 250) * -2f * -Gravity);
-                ForwardVelocity = .6f;
-                inputDir = new Vector2(0,0);
-                isSliding = false;
-            }
-            else
-            {
-                airSpeed = Mathf.Sqrt((JumpPower / 100) * -2f * -Gravity);
-            }
-            */
-
-            airSpeed = Mathf.Sqrt((JumpPower / 100) * -2f * -Gravity);
         }
 
         // Math To Get Jumping While Sliding Giving A Small Boost In The Air
@@ -942,8 +973,9 @@ public class Player : NetworkBehaviour
     float xRot = 0.0f;
     protected void CameraMovement()
     {
-        float mouseX = Input.GetAxis("Mouse X") * (MouseSens * 2);
-        float mouseY = Input.GetAxis("Mouse Y") * (MouseSens * 2);
+        Vector2 m = im.getMouse();
+        float mouseX = m.x * (MouseSens * 2);
+        float mouseY = m.y * (MouseSens * 2);
 
         xRot -= mouseY;
         xRot = Mathf.Clamp(xRot, -75, 75);

@@ -20,4 +20,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Duel/Maps/Duel Prototype.unity
     guid: 810d6081079e7be4dae01a0a271abf8a
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 13aec320513869b45abe8cf4d47995fe, type: 2}

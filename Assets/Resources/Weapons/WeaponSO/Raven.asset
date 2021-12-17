@@ -21,18 +21,18 @@ MonoBehaviour:
   BaseDamage: 18
   HeadShotDamage: 36
   Extremities: 12
-  BaseBloom: 2
-  AirBloom: 20
-  RunBloom: 12
-  CrouchBloom: 0
+  BaseBloom: 6
+  AirBloom: 30
+  RunBloom: 16
+  SlideBloom: 4
+  CrouchBloom: 2
   FireType: 1
-  RPM: 500
+  RPM: 1400
   ShotsPerFire: 1
   DelayPerShot: 0
   BulletPen: 1
   FallOffDamage: 30
-  RecoilX: {x: -2, y: 2}
-  RecoilY: {x: 0.25, y: 2}
-  RecoilResetTime: 0
-  MagSize: 18
-  MaxAmmo: 90
+  RecoilX: {x: -12, y: 24}
+  RecoilY: {x: 20, y: 35}
+  MagSize: 100
+  MaxAmmo: 300

@@ -33,6 +33,7 @@ public class Gun : ScriptableObject
     public float BaseBloom;
     public float AirBloom;
     public float RunBloom;
+    public float SlideBloom;
     public float CrouchBloom;
 
     [Header("Firing")]
@@ -59,8 +60,6 @@ public class Gun : ScriptableObject
     public Vector2 RecoilX;
     [Tooltip("How Much Recoil After Every Shot for Y - (MIN,MAX)")]
     public Vector2 RecoilY;
-    [Tooltip("How Many Seconds Until Player Can Move Gun Back To ZERO")]
-    public int RecoilResetTime;
 
     [Header("Ammo")]
     public int MagSize;

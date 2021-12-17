@@ -23,6 +23,12 @@ public class GameManager : NetworkManager
         base.OnStartClient();
         NetworkClient.RegisterHandler<SceneLoader>(clientLoader);
         NetworkClient.RegisterHandler<DiscconnectMessage>(clientKicked);
+        NetworkClient.RegisterHandler<GameObjectData>(onGameObjectData);
+    }
+
+    protected virtual void onGameObjectData(GameObjectData g)
+    {
+
     }
 
     protected virtual void serverStart()
@@ -215,5 +221,11 @@ public class GameManager : NetworkManager
         public string Header;
         public string Body;
         public string NetworkConn;
+    }
+
+    protected struct GameObjectData : NetworkMessage
+    {
+        public GameObject obj;
+        public bool active;
     }
 }

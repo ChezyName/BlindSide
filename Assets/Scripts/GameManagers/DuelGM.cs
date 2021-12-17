@@ -59,6 +59,11 @@ public class DuelGM : GameManager
         conn.Send(new PlayerData { name = "User " + UnityEngine.Random.Range(0, 255) });
     }
 
+    protected override void onGameObjectData(GameObjectData g)
+    {
+        g.obj.SetActive(g.active);
+    }
+
     [Server]
     protected override void OnCreatePlayer(NetworkConnection conn, PlayerData createPlayerMessage)
     {
@@ -121,11 +126,13 @@ public class DuelGM : GameManager
         {
             //Debug.Log("P1 Died, P2 Wins!");
             p1Wins++;
+            //NetworkServer.SendToAll(new GameObjectData { obj = p1p.gameObject, active = false });
         }
         else
         {
             //Debug.Log("P2 Died, P1 Wins!");
             p2Wins++;
+            //NetworkServer.SendToAll(new GameObjectData { obj = p2p.gameObject, active = false});
         }
 
         if(p1Wins == 5)
@@ -140,6 +147,18 @@ public class DuelGM : GameManager
         }
         else
         {
+            /*
+            if(p1p != null)
+            {
+                p1p.changeCanMove(false);
+            }
+
+            if (p2p != null)
+            {
+                p2p.changeCanMove(false);
+            }
+            */
+
             resetMatch();
         }
     }
@@ -255,6 +274,18 @@ public class DuelGM : GameManager
             {
                 gameStarted = true;
             }
+        }
+    }
+
+    private DuelPlayer getOtherPlayer(DuelPlayer p)
+    {
+        if(p == p1p)
+        {
+            return p2p;
+        }
+        else
+        {
+            return p1p;
         }
     }
 }
