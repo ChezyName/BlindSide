@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Settings : MonoBehaviour
 {
     private GameSettings.PlayerSettings ps;
+    private InputManager manager;
 
     [Header("Sensitivity")]
     public InputField Sensif;
@@ -21,7 +22,13 @@ public class Settings : MonoBehaviour
         ps = GameSettings.current.GetSettings();
         Sensif.text = ps.Sensitivty.ToString();
         SensSlider.value = (float)ps.Sensitivty;
-        UpdateVideoScreen();
+        manager = InputManager.current;
+        //UpdateVideoScreen();
+    }
+
+    public void openSettingsMenu()
+    {
+        manager.changeSettingsWindow(true);
     }
 
     public void onSlideSens()

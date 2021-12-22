@@ -2,7 +2,7 @@
     "name": "PlayerInput",
     "maps": [
         {
-            "name": "PlayerBase",
+            "name": "Player",
             "id": "b253cfa6-3cf4-4c97-99f9-3497f4f8f603",
             "actions": [
                 {
@@ -71,17 +71,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "abc2b69c-f490-43af-9174-a16da725992a",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -196,6 +185,12 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "None",
+            "id": "fa47736e-7dca-46c6-b57f-8445b3add36c",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

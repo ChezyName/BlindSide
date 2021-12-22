@@ -24,6 +24,7 @@ public class ModalWindow : MonoBehaviour
         Content.text = content;
 
         Window.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void closeWindow()
@@ -33,6 +34,6 @@ public class ModalWindow : MonoBehaviour
 
     public bool checkifShown()
     {
-        return Window.active;
+        return Window.activeSelf;
     }
 }
