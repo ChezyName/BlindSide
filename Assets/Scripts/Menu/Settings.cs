@@ -28,7 +28,15 @@ public class Settings : MonoBehaviour
 
     public void openSettingsMenu()
     {
-        manager.changeSettingsWindow(true);
+        if(manager == null)
+        {
+            manager = InputManager.current;
+            openSettingsMenu();
+        }
+        else
+        {
+            manager.changeSettingsWindow(true);
+        }
     }
 
     public void onSlideSens()

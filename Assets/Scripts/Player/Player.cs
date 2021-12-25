@@ -474,9 +474,11 @@ public class Player : NetworkBehaviour
 
         if(Physics.Raycast(r,out hit,5f))
         {
+            /*
             if(hit.collider.GetComponent<Interactable>() != null){
                 hit.collider.GetComponent<Interactable>().onInteract();
             }
+            */
         }
     }
 
