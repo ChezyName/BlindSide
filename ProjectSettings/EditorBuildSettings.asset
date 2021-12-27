@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: c4efaa55551b16a4996919ae743134ec
   - enabled: 1
-    path: Assets/Scenes/Maps/TrainingGrounds/TrainingGrounds.unity
-    guid: 297090bcd620bb7419c2f09974f1e5f0
+    path: Assets/Scenes/TestingGrounds.unity
+    guid: 5544253e59061b14998b8aacf9a3f337
   - enabled: 1
     path: Assets/Scenes/Duel/DuelMain.unity
     guid: 439dd0e2e96f0fc4aa699926953dc8ee

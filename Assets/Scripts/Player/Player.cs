@@ -202,6 +202,7 @@ public class Player : NetworkBehaviour
         // subscribe to on escape and jump events
         im.onEscape += onEscape;
         im.onJump += onJump;
+        im.FlashlightNV += onFlashNVButton;
     }
 
     [Client]
@@ -239,7 +240,8 @@ public class Player : NetworkBehaviour
     {
         if (netIdentity.isLocalPlayer && !Paused)
         {
-            pingText.text = $"{Mathf.Round((float)NetworkTime.rtt * 1000)}ms";
+            if(pingText != null) pingText.text = $"{Mathf.Round((float)NetworkTime.rtt * 1000)}ms";
+
             UpdateGravity();
             if(canMove) UpdateButtons();
             //if(Input.GetKeyDown(KeyCode.E)) CmdInteract();
@@ -507,6 +509,14 @@ public class Player : NetworkBehaviour
         Camera.transform.localEulerAngles = Vector3.right * xRot;
     }
 
+    private void onFlashNVButton(bool actv)
+    {
+        if (actv)
+        {
+            CmdToggleUtility();
+        }
+    }
+
     protected void UpdateButtons()
     {
         if (im.getSprint() && !isDowned)
@@ -541,14 +551,6 @@ public class Player : NetworkBehaviour
         {
             //Debug.Log(CurrentGun + " IS NULL!");
         }
-
-        /*
-        // CONVERTE TO NEW INPUTMANAGER
-        if (Input.GetKeyDown(KeyCode.F) && !isDowned)
-        {
-            CmdToggleUtility();
-        }
-        */
 
         //if (Input.GetKeyDown(KeyCode.Alpha1) && !isDowned && Primary != null) OnPrimaryPressed();
 

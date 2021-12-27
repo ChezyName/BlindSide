@@ -7,43 +7,22 @@ public class Interactable : NetworkBehaviour
 {
     // SERVER + CLIENT
     public OnInteration[] Interactions;
-
-    // Client Only
-    int InteractionIndex = 0;
-
+    //public Transform InteractionPoint;
+    [SyncVar]
+    public bool CanUse = true;
 
     private void Start()
     {
         if (netIdentity.isClient)
         {
             //Client
-            InteractionIndex = 0;
         }
-    }
-
-    public void Next()
-    {
-        int n = InteractionIndex + 1;
-        if(n >= Interactions.Length - 1)
-        {
-            n = Interactions.Length - 1;
-        }
-        InteractionIndex = n;
-    }
-
-    public void Last()
-    {
-        int n = InteractionIndex - 1;
-        if (n <= 0)
-        {
-            n = 0;
-        }
-        InteractionIndex = n;
     }
 
     [Command(requiresAuthority = false)]
-    public void Interact()
+    public void Interact(int Inx)
     {
-        Interactions[InteractionIndex].onInteract();
+        if (Inx >= Interactions.Length || Interactions[Inx] == null || CanUse == false) return;
+        Interactions[Inx].onInteract(this);
     }
 }

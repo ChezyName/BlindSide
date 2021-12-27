@@ -8,8 +8,9 @@ public class DynamicCrosshair : MonoBehaviour
     private RectTransform Retical;
     private float currentSize;
     private Rect Basesize;
-    [Range(0,500)]
-    public float b;
+    //[Range(0,500)]
+    private float b;
+    public Image[] Outside;
 
     private void Start()
     {
@@ -31,6 +32,9 @@ public class DynamicCrosshair : MonoBehaviour
 
     public void setActive(bool value)
     {
-        Retical.gameObject.SetActive(value);
+        foreach(Image i in Outside)
+        {
+            i.gameObject.SetActive(value);
+        }
     }
 }

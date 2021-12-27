@@ -47,6 +47,7 @@ public class DuelPlayer : Player
     [Server]
     private void getWins()
     {
+        if (dgm == null) return;
         myWins = dgm.getMyWins(playerName);
         enemyWins = dgm.getOtherWins(playerName);
     }

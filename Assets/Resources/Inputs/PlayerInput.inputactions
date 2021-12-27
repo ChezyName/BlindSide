@@ -60,6 +60,30 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Selection",
+                    "type": "Value",
+                    "id": "effaee23-7a5a-400d-b561-882cb161a935",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "Tap"
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "5dabb999-4500-402c-ae2a-a34a4faf8d53",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Light/NV",
+                    "type": "Button",
+                    "id": "29781593-43ec-4233-a5c8-94021ef890cb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -183,6 +207,39 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "517290da-cea5-4388-b4fe-a5906cee87e7",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "92bf05dd-fce1-4a84-aead-bcd0954276f9",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Selection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e45ddb1e-bd20-4f6b-9763-b027642710f8",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Light/NV",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

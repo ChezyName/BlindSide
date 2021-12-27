@@ -88,6 +88,24 @@ public class FlexibleGridLayout : LayoutGroup
         }
     }
 
+    private void Update()
+    {
+        if (fitType == FitType.FixedSize)
+        {
+            Image i = rectTransform.GetComponent<Image>();
+            if (rectChildren.Count - 1 <= 0)
+            {
+                // No Children
+                i.enabled = false;
+            }
+            else
+            {
+                // 1 OR MORE CHILDREN
+                i.enabled = true;
+            }
+        }
+    }
+
     public override void CalculateLayoutInputVertical()
     {
         //throw new System.NotImplementedException();

@@ -7,7 +7,8 @@ public class OnInteration : NetworkBehaviour
 {
     protected string InteractionName;
 
-    public virtual void onInteract()
+    [Server]
+    public virtual void onInteract(Interactable interactable)
     {
 
     }

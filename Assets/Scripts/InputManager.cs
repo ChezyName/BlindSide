@@ -305,9 +305,36 @@ public class InputManager : MonoBehaviour
     // Getting The Inputs For Each
     public event Action<bool> onEscape;
     public event Action<bool> onJump;
+    public event Action<bool> onScroll;
+    public event Action<bool> onInteract;
+    public event Action<bool> FlashlightNV;
     public void setJump(InputAction.CallbackContext ctx)
     {
         onJump(ctx.started);
+    }
+
+    public void setFlashNV(InputAction.CallbackContext ctx)
+    {
+        FlashlightNV(ctx.started);
+    }
+
+    public void setInteraction(InputAction.CallbackContext ctx)
+    {
+        onInteract(ctx.started);
+    }
+
+    public void setScroll(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.started) return;
+        float z = ctx.ReadValue<float>();
+        if (z < 0) 
+        { 
+            onScroll(true);
+        }
+        else if (z > 0)
+        {
+            onScroll(false);
+        }
     }
 
     public void setCrouch(InputAction.CallbackContext ctx)
